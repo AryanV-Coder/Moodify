@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moodify - Your Mood, Your Music</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Logo at top center -->
+    <div class="logo-container">
+        <img src="app_logo.jpg" alt="Moodify Logo" class="logo">
+    </div>
+
+    <!-- Main container -->
+    <div class="main-container">
+        
+        <!-- Image Input Section -->
+        <div class="input-section">
+            <div class="image-box" id="imageBox">
+                <div class="placeholder" id="placeholder">
+                    <div class="icon">📷</div>
+                    <p>Click to upload image or use camera</p>
+                </div>
+                <img id="preview" class="preview-image" style="display: none;">
+                <video id="video" autoplay playsinline style="display: none;"></video>
+                <canvas id="canvas" style="display: none;"></canvas>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button class="btn" id="uploadBtn">📁 Upload Image</button>
+                <button class="btn" id="cameraBtn">📸 Use Camera</button>
+                <button class="btn btn-primary" id="analyzeBtn" disabled>Analyze Mood</button>
+            </div>
+
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        </div>
+
+        <!-- Output Section -->
+        <div class="output-section">
+            <div class="output-box" id="outputBox">
+                <div class="output-placeholder">
+                    <p>Your mood analysis will appear here...</p>
+                </div>
+                <div class="output-content" id="outputContent" style="display: none;"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
