@@ -162,26 +162,26 @@ analyzeBtn.addEventListener('click', async () => {
         
         // Display result with proper formatting
         outputContent.innerHTML = `
-            <div style="text-align: center; padding: 10px;">
-                <div style="font-size: 3rem; margin-bottom: 10px;">
+            <div style="text-align: center; padding: 5px;">
+                <div style="font-size: 2.5rem; margin-bottom: 5px;">
                     ${moodEmoji}
                 </div>
-                <div style="font-size: 1.4rem; font-weight: bold; color: #1db954; margin-bottom: 15px;">
+                <div style="font-size: 1.3rem; font-weight: bold; color: #1db954; margin-bottom: 8px;">
                     ${mood}
                 </div>
-                <div style="font-size: 1.1rem; color: #fff; margin-bottom: 20px; line-height: 1.5;">
+                <div style="font-size: 0.95rem; color: #fff; margin-bottom: 12px; line-height: 1.3;">
                     ${message}
                 </div>
-                <div style="background: #282828; padding: 15px; border-radius: 12px; margin-top: 15px;">
-                    <div style="font-size: 0.9rem; color: #888; margin-bottom: 8px;">Now Playing:</div>
-                    <div style="font-size: 1.2rem; font-weight: 600; color: #1db954; margin-bottom: 12px;">
+                <div style="background: #282828; padding: 10px; border-radius: 10px; margin-top: 8px;">
+                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px;">Now Playing:</div>
+                    <div style="font-size: 1rem; font-weight: 600; color: #1db954; margin-bottom: 8px;">
                         🎵 ${songName}
                     </div>
                     ${songLink ? `
                         <a href="${songLink}" target="_blank" 
                            style="display: inline-block; background: #1db954; color: #000; 
-                                  padding: 10px 24px; border-radius: 25px; text-decoration: none; 
-                                  font-weight: 600; transition: all 0.2s ease;">
+                                  padding: 8px 20px; border-radius: 20px; text-decoration: none; 
+                                  font-weight: 600; font-size: 0.9rem; transition: all 0.2s ease;">
                             ▶️ Play Song
                         </a>
                     ` : ''}
