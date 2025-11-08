@@ -128,7 +128,7 @@ analyzeBtn.addEventListener('click', async () => {
     }
     
     // Show loading
-    outputContent.innerHTML = '<div style="color: #1db954;">🔄 Analyzing your mood...</div>';
+    outputContent.innerHTML = '<div style="color: #1db954;">Analyzing your mood...</div>';
     outputContent.style.display = 'block';
     outputBox.querySelector('.output-placeholder').style.display = 'none';
     analyzeBtn.disabled = true;
