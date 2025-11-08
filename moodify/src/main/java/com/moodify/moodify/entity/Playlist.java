@@ -1,6 +1,6 @@
-package com.moodify.moodify.models;
+package com.moodify.moodify.entity;
 
-import com.moodify.moodify.utils.MoodType;
+import com.moodify.moodify.service.MoodType;
 
 import java.util.List;
 

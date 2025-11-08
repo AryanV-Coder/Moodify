@@ -1,4 +1,4 @@
-package com.moodify.moodify.utils;
+package com.moodify.moodify.service;
 
 import com.moodify.moodify.enums.Mood;
 

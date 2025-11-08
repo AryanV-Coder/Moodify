@@ -1,5 +1,5 @@
 // API endpoint - change this to your backend URL
-const API_URL = 'http://localhost:8000/api/analyze';
+const API_URL = 'http://127.0.0.1:8080/api/analyse';
 
 // Get elements
 const imageBox = document.getElementById('imageBox');
@@ -150,7 +150,7 @@ analyzeBtn.addEventListener('click', async () => {
         
         // Get response text
         const data = await response.json();
-        const resultText = data.result || data.mood || data.message || JSON.stringify(data);
+        const resultText = data.response || JSON.stringify(data);
         
         // Display result
         outputContent.innerHTML = resultText;
