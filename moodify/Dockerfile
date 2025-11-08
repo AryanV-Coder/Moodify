@@ -15,8 +15,8 @@ RUN chmod +x mvnw
 # Build the application
 RUN ./mvnw clean package -DskipTests
 
-# Run stage
-FROM openjdk:17-jdk-slim
+# Run stage - USE THIS INSTEAD
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 # Copy the built jar from build stage
