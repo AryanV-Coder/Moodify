@@ -138,6 +138,45 @@ function stopCamera() {
     video.style.display = 'none';
 }
 
+// Compress image if needed (to stay under 10MB)
+async function compressImage(file) {
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    
+    // If file is already small enough, return as is
+    if (file.size <= maxSize) {
+        return file;
+    }
+    
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                
+                // Reduce dimensions to compress
+                const scale = Math.sqrt(maxSize / file.size);
+                width *= scale;
+                height *= scale;
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                canvas.toBlob((blob) => {
+                    resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                }, 'image/jpeg', 0.8);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
 // Analyze button click
 analyzeBtn.addEventListener('click', async () => {
     if (!currentImage) {
@@ -151,11 +190,14 @@ analyzeBtn.addEventListener('click', async () => {
     outputBox.querySelector('.output-placeholder').style.display = 'none';
     analyzeBtn.disabled = true;
     
-    // Create form data
-    const formData = new FormData();
-    formData.append('image', currentImage);
-    
     try {
+        // Compress image if needed
+        const compressedImage = await compressImage(currentImage);
+        
+        // Create form data
+        const formData = new FormData();
+        formData.append('image', compressedImage);
+        
         // Send to API
         const response = await fetch(API_URL, {
             method: 'POST',

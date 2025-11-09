@@ -1,4 +1,4 @@
-# 🎵 Moodify
+# 🎧 Moodify
 
 ## 🚀 Live Demo
 
