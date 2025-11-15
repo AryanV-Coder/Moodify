@@ -36,6 +36,14 @@ Moodify combines the power of AI-driven facial emotion recognition with curated 
 
 ---
 
+## Future Scope
+
+In the future, Moodify can extend beyond personal use on a device and become a part of everyday environments. Imagine walking into your home after a long day at work — a small, unobtrusive camera at the entrance detects your mood instantly and begins playing a song that matches how you feel. No manual input, no effort. Just seamless, mood-aware automation.
+
+Moodify could also integrate with smart speakers, ambient lighting systems, or even car infotainment units to create a fully adaptive atmosphere based on your emotional state. With further improvements in emotion detection and personalized audio curation, Moodify can evolve into a complete smart-environment experience that responds to you the moment you step in.
+
+---
+
 ## 🛠️ Tech Stack
 
 ### Frontend
