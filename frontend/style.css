@@ -400,6 +400,19 @@ body {
         margin: 0 auto;
         width: 100%;
     }
+    
+    /* Mobile layout order: Capture Mood -> Mood Analysis -> Now Playing */
+    .input-section {
+        order: 1;
+    }
+    
+    .output-section {
+        order: 2;
+    }
+    
+    .youtube-section {
+        order: 3;
+    }
 }
 
 @media (max-width: 768px) {
