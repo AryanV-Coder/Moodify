@@ -16,40 +16,71 @@
     <!-- Main container -->
     <div class="main-container">
         
-        <!-- Image Input Section -->
-        <div class="input-section">
-            <div class="image-box" id="imageBox">
-                <div class="placeholder" id="placeholder">
-                    <div class="icon">📷</div>
-                    <p>Click to upload image or use camera</p>
+        <!-- YouTube Player Section (Left) -->
+        <div class="youtube-section">
+            <div class="section-card" id="youtubeCard">
+                <div class="section-header">
+                    <span class="section-icon">🎵</span>
+                    <h3>Now Playing</h3>
                 </div>
-                <img id="preview" class="preview-image" style="display: none;">
-                <video id="video" autoplay playsinline style="display: none;"></video>
-                <canvas id="canvas" style="display: none;"></canvas>
+                <div id="youtubePlayerContainer" class="youtube-player-wrapper">
+                    <div class="player-placeholder">
+                        <div class="player-icon">🎧</div>
+                        <p>Your mood-based song will play here</p>
+                    </div>
+                    <div id="youtubePlayer"></div>
+                </div>
             </div>
+        </div>
+        
+        <!-- Image Input Section (Center) -->
+        <div class="input-section">
+            <div class="section-card">
+                <div class="section-header">
+                    <span class="section-icon">📸</span>
+                    <h3>Capture Your Mood</h3>
+                </div>
+                <div class="image-box" id="imageBox">
+                    <div class="placeholder" id="placeholder">
+                        <div class="icon">📷</div>
+                        <p>Click to upload image or use camera</p>
+                    </div>
+                    <img id="preview" class="preview-image" style="display: none;">
+                    <video id="video" autoplay playsinline style="display: none;"></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                </div>
 
-            <!-- Buttons -->
-            <div class="button-group">
-                <button class="btn" id="uploadBtn">📁 Upload Image</button>
-                <button class="btn" id="cameraBtn">📸 Use Camera</button>
-                <button class="btn btn-primary" id="analyzeBtn" disabled>Analyze Mood</button>
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button class="btn" id="uploadBtn">📁 Upload</button>
+                    <button class="btn" id="cameraBtn">📸 Camera</button>
+                    <button class="btn btn-primary" id="analyzeBtn" disabled>🔍 Analyze Mood</button>
+                </div>
+
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
             </div>
-
-            <input type="file" id="fileInput" accept="image/*" style="display: none;">
         </div>
 
-        <!-- Output Section -->
+        <!-- Output Section (Right) -->
         <div class="output-section">
-            <div class="output-box" id="outputBox">
-                <div class="output-placeholder">
-                    <p>Your mood analysis will appear here...</p>
+            <div class="section-card">
+                <div class="section-header">
+                    <span class="section-icon">✨</span>
+                    <h3>Mood Analysis</h3>
                 </div>
-                <div class="output-content" id="outputContent" style="display: none;"></div>
+                <div class="output-box" id="outputBox">
+                    <div class="output-placeholder">
+                        <div class="analysis-icon">🎭</div>
+                        <p>Your mood analysis will appear here...</p>
+                    </div>
+                    <div class="output-content" id="outputContent" style="display: none;"></div>
+                </div>
             </div>
         </div>
 
     </div>
 
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>
 </body>
 </html>

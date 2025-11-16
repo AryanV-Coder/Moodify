@@ -5,7 +5,17 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOriginrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.moodify.moodify.data.PlaylistRepository;
@@ -37,8 +47,12 @@ public class MoodifyController {
             System.out.println("✅ Image received successfully, size : " + imageBytes.length + " bytes, " + "filename : " + fileName);
 
 
-            String moodString = aiServiceClient.getMoodFromImage(imageBytes, fileName);
+            Map<String, String> aiResponse = aiServiceClient.getMoodFromImage(imageBytes, fileName);
+            String moodString = aiResponse.get("mood");
+            String aiComment = aiResponse.get("comment");
+            
             System.out.println("MOOD : " + moodString);
+            System.out.println("AI COMMENT : " + aiComment);
 
             // Converting string to Mood enum
             Mood mood = Mood.valueOf(moodString.toUpperCase());
@@ -52,13 +66,13 @@ public class MoodifyController {
                 response.put("song_name", randomSong.getName());
                 response.put("song_mood", moodString);
                 response.put("song_link", randomSong.getLink());
-                response.put("message", randomSong.getMood().getMessage());
+                response.put("ai_comment", aiComment);  // Add AI's personalized comment
                 System.out.println("🎵 Random song: " + randomSong.getName());
             } else {
                 response.put("song_name", "No song available");
                 response.put("song_mood", moodString);
                 response.put("song_link", "");
-                response.put("message", "No song found for this mood");
+                response.put("ai_comment", aiComment);  // Add AI's personalized comment
             }
 
             return ResponseEntity.ok(response);

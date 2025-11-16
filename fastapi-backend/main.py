@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import google.generativeai as genai
 import base64
 import os
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -36,47 +37,81 @@ async def mood_analysis(image : UploadFile = File(None)):
                 "role": "user",
                 "parts": [
                     {
-                        "text": """You are a mood detection AI assistant. Your task is to analyze the facial expression and body language of the person in the provided image and determine their emotional state.
+                        "text": """You are an advanced mood detection AI assistant with emotional intelligence. Your task is to carefully analyze the facial expression, body language, and overall demeanor of the person in the provided image to determine their emotional state.
 
 CLASSIFICATION RULES:
 You must classify the mood into EXACTLY ONE of these four categories:
 
-1. HAPPY - The person displays positive emotions such as:
-   - Smiling or laughing
-   - Bright, open facial expression
-   - Relaxed and joyful demeanor
-   - Cheerful body language
+1. HAPPY - The person displays positive, joyful emotions such as:
+   - Genuine smiling or laughing
+   - Bright, open facial expression with relaxed features
+   - Joyful demeanor and positive energy
+   - Cheerful body language and upright posture
+   - Sparkling or warm eyes
 
-2. SAD - The person displays negative or melancholic emotions such as:
+2. SAD - The person displays negative, melancholic, or sorrowful emotions such as:
    - Frowning or downturned mouth
-   - Tears or watery eyes
+   - Tears, watery eyes, or red eyes
    - Slumped posture or downcast gaze
    - Somber or dejected expression
+   - Low energy or withdrawn demeanor
 
-3. LOVE - The person displays romantic or affectionate emotions such as:
+3. LOVE - The person displays romantic, affectionate, or warm emotions such as:
    - Soft, dreamy facial expression
-   - Gentle smile with warm eyes
-   - Tender or romantic gestures
+   - Gentle smile with warm, tender eyes
+   - Romantic or affectionate gestures
    - Heart-shaped hand gestures or loving poses
+   - Peaceful, content expression with warmth
 
-4. ENERGETIC - The person displays high energy or excitement such as:
+4. ENERGETIC - The person displays high energy, excitement, or enthusiasm such as:
    - Wide eyes and animated expression
    - Dynamic or active posture
    - Enthusiastic gestures or movements
    - Vibrant and lively demeanor
+   - Intense focus or excitement
 
-OUTPUT REQUIREMENTS:
-- Output ONLY the mood category name in CAPITAL LETTERS
-- Do NOT include any explanation, commentary, or additional text
-- Do NOT use punctuation or formatting
-- Valid outputs are: HAPPY, SAD, LOVE, or ENERGETIC
-- Choose the MOST dominant mood if multiple emotions are present
+IMPORTANT OUTPUT FORMAT:
+You MUST return your response as a valid JSON object with EXACTLY this structure:
+{
+    "mood": "CATEGORY_NAME",
+    "comment": "Your personalized comment here with emojis"
+}
 
-Example valid outputs:
-HAPPY
-SAD
-LOVE
-ENERGETIC"""
+JSON REQUIREMENTS:
+- Use double quotes for both keys and string values
+- The "mood" value must be ONE of: HAPPY, SAD, LOVE, or ENERGETIC (in CAPITAL LETTERS)
+- The "comment" should be a warm, personalized message with EXACTLY 5 LINES that:
+  * Each line should be short and impactful (5-15 words per line)
+  * Lines should relate to the detected mood and be fun/engaging
+  * Include relevant emojis throughout (2-3 emojis per line, 10-15 emojis total)
+  * Mix encouragement, humor, and mood-related observations
+  * Use line breaks between each line for better readability
+  * Feels natural, human-like, and uplifting
+- Do NOT include any text outside the JSON object
+- Ensure the JSON is properly formatted and parseable
+- Don't return any extra metadata or comment
+
+EXAMPLE OUTPUTS:
+
+{
+    "mood": "HAPPY",
+    "comment": "Your smile is lighting up the whole room! 😊✨💫\nThat positive energy is absolutely contagious! 🌟😄\nKeep spreading those good vibes everywhere! 🎉💖\nThe world definitely needs more of your happiness! 🌈🌻\nYou're radiating pure joy today! 🚀💛✨"
+}
+
+{
+    "mood": "SAD",
+    "comment": "I can see you're going through a tough time. 💙😔\nIt's totally okay to feel this way sometimes. 🌧️💭\nRemember, storms don't last forever! 🌈☀️\nYou're stronger than you think, trust me! 💪❤️\nBrighter and better days are just around the corner! 🌅✨🦋"
+}
+
+{
+    "mood": "LOVE",
+    "comment": "Your eyes are absolutely glowing with warmth! 💕😊✨\nLove looks so beautiful on you right now! ❤️🌹\nThose tender feelings are truly precious! 💝💖\nCherish every moment of this magical emotion! 🥰✨\nKeep your heart open and let love flow! 💗🦋🌟"
+}
+
+{
+    "mood": "ENERGETIC",
+    "comment": "Wow, your energy is absolutely electric today! ⚡🔥💥\nThat enthusiasm is ready to conquer the world! 🚀💪\nYou're vibrating on a whole different frequency! 🎸✨\nChannel that power into something amazing! 🌟🎯\nNothing can stop you with this kind of energy! 💯🔥🎉"
+}"""
                     }
                 ]
             },
@@ -92,11 +127,52 @@ ENERGETIC"""
         ]
         
         response = model.generate_content(prompt)
-        print(f"✅ Response : {response.text.upper()}")
-        return {
-            "status" : "success",
-            "response" : response.text.upper()
-        }
+        response_text = response.text.strip()
+        
+        # Remove markdown code blocks if present
+        if response_text.startswith("```json"):
+            response_text = response_text[7:]
+        if response_text.startswith("```"):
+            response_text = response_text[3:]
+        if response_text.endswith("```"):
+            response_text = response_text[:-3]
+        response_text = response_text.strip()
+        
+        try:
+            # Parse the JSON response
+            mood_data = json.loads(response_text)
+            
+            # Validate the response structure
+            if "mood" not in mood_data or "comment" not in mood_data:
+                raise ValueError("Invalid JSON structure: missing required fields")
+            
+            # Validate mood category
+            valid_moods = ["HAPPY", "SAD", "LOVE", "ENERGETIC"]
+            if mood_data["mood"].upper() not in valid_moods:
+                raise ValueError(f"Invalid mood category: {mood_data['mood']}")
+            
+            # Ensure mood is uppercase
+            mood_data["mood"] = mood_data["mood"].upper()
+            
+            print(f"✅ Mood Analysis: {mood_data['mood']}")
+            print(f"✅ Comment: {mood_data['comment']}")
+            
+            return {
+                "status": "success",
+                "mood": mood_data["mood"],
+                "comment": mood_data["comment"]
+            }
+            
+        except json.JSONDecodeError as e:
+            print(f"❌ JSON Parse Error: {e}")
+            print(f"Raw response: {response_text}")
+            raise HTTPException(status_code=500, detail="Failed to parse AI response as JSON")
+        except ValueError as e:
+            print(f"❌ Validation Error: {e}")
+            raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+            print(f"❌ Unexpected Error: {e}")
+            raise HTTPException(status_code=500, detail="Failed to process mood analysis")
     else :
         print("🛑 NOTHING RECIEVED")
         raise HTTPException(status_code = 400, detail = "Nothing Recieved")

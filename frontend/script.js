@@ -1,6 +1,81 @@
 // API endpoint - change this to your backend URL
 const API_URL = 'https://moodify-springboot-backend.onrender.com/api/analyse';
 
+// YouTube Player variables
+let player;
+let isYouTubeReady = false;
+
+// YouTube IFrame API ready callback
+function onYouTubeIframeAPIReady() {
+    console.log('✅ YouTube IFrame API is ready');
+    isYouTubeReady = true;
+}
+
+// Extract YouTube video ID from URL
+function extractVideoId(url) {
+    if (!url) return null;
+    
+    // Handle different YouTube URL formats
+    const patterns = [
+        /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/,
+        /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+        /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+        /(?:youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/
+    ];
+    
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match) return match[1];
+    }
+    
+    return null;
+}
+
+// Play YouTube video
+function playYouTubeVideo(videoId) {
+    const playerContainer = document.getElementById('youtubePlayerContainer');
+    
+    if (!videoId) {
+        console.error('No video ID provided');
+        return;
+    }
+    
+    // Destroy existing player if any
+    if (player) {
+        player.destroy();
+    }
+    
+    // Add active class to show player
+    playerContainer.classList.add('active');
+    
+    // Create new player
+    player = new YT.Player('youtubePlayer', {
+        height: '280',
+        width: '100%',
+        videoId: videoId,
+        playerVars: {
+            'autoplay': 1,
+            'controls': 1,
+            'modestbranding': 1,
+            'rel': 0
+        },
+        events: {
+            'onReady': onPlayerReady,
+            'onError': onPlayerError
+        }
+    });
+}
+
+function onPlayerReady(event) {
+    console.log('✅ YouTube player is ready');
+    event.target.playVideo();
+}
+
+function onPlayerError(event) {
+    console.error('YouTube player error:', event.data);
+    alert('Sorry, there was an error playing the video.');
+}
+
 // Wake up servers on page load
 window.addEventListener('load', () => {
     console.log('🚀 Waking up servers...');
@@ -213,7 +288,7 @@ analyzeBtn.addEventListener('click', async () => {
         
         // Extract data from response
         const mood = data.song_mood || 'UNKNOWN';
-        const message = data.message || 'Mood detected!';
+        const aiComment = data.ai_comment || 'Mood detected! 😊';
         const songName = data.song_name || 'No song available';
         const songLink = data.song_link || '';
         
@@ -222,39 +297,64 @@ analyzeBtn.addEventListener('click', async () => {
         
         // Display result with proper formatting
         outputContent.innerHTML = `
-            <div style="text-align: center; padding: 5px;">
-                <div style="font-size: 2.5rem; margin-bottom: 5px;">
+            <div style="text-align: center; padding: 10px;">
+                <div style="font-size: 3rem; margin-bottom: 10px; animation: fadeIn 0.5s ease-in;">
                     ${moodEmoji}
                 </div>
-                <div style="font-size: 1.3rem; font-weight: bold; color: #1db954; margin-bottom: 8px;">
+                <div style="font-size: 1.4rem; font-weight: bold; color: #1db954; margin-bottom: 15px; letter-spacing: 1px;">
                     ${mood}
                 </div>
-                <div style="font-size: 0.95rem; color: #fff; margin-bottom: 12px; line-height: 1.3;">
-                    ${message}
+                <div style="font-size: 1rem; color: #fff; margin-bottom: 20px; line-height: 1.6; padding: 15px 20px; background: linear-gradient(135deg, rgba(29, 185, 84, 0.15) 0%, rgba(29, 185, 84, 0.05) 100%); border-radius: 12px; border: 2px solid rgba(29, 185, 84, 0.3); box-shadow: 0 4px 15px rgba(29, 185, 84, 0.1);">
+                    ${aiComment}
                 </div>
-                <div style="background: #282828; padding: 10px; border-radius: 10px; margin-top: 8px;">
-                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px;">Now Playing:</div>
-                    <div style="font-size: 1rem; font-weight: 600; color: #1db954; margin-bottom: 8px;">
-                        🎵 ${songName}
+                <div style="background: linear-gradient(135deg, #282828 0%, #1a1a1a 100%); padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px solid #333;">
+                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">🎵 Now Playing</div>
+                    <div style="font-size: 1.1rem; font-weight: 600; color: #1db954; margin-bottom: 12px;">
+                        ${songName}
                     </div>
                     ${songLink ? `
-                        <a href="${songLink}" target="_blank" 
-                           style="display: inline-block; background: #1db954; color: #000; 
-                                  padding: 8px 20px; border-radius: 20px; text-decoration: none; 
-                                  font-weight: 600; font-size: 0.9rem; transition: all 0.2s ease;">
+                        <button id="playSongBtn" 
+                           style="display: inline-block; background: linear-gradient(135deg, #1db954 0%, #1ed760 100%); color: #000; 
+                                  padding: 10px 24px; border-radius: 25px; border: none;
+                                  font-weight: 700; font-size: 0.9rem; transition: all 0.3s ease;
+                                  cursor: pointer; box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);"
+                           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(29, 185, 84, 0.5)';"
+                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(29, 185, 84, 0.3)';">
                             ▶️ Play Song
-                        </a>
+                        </button>
                     ` : ''}
                 </div>
             </div>
         `;
         outputContent.style.display = 'block';
         
-        // Automatically open the song link in a new tab
+        // Play YouTube video when button is clicked
         if (songLink) {
-            setTimeout(() => {
-                window.open(songLink, '_blank');
-            }, 1000);
+            const videoId = extractVideoId(songLink);
+            if (videoId && isYouTubeReady) {
+                // Add event listener to play button
+                setTimeout(() => {
+                    const playBtn = document.getElementById('playSongBtn');
+                    if (playBtn) {
+                        playBtn.addEventListener('click', () => {
+                            playYouTubeVideo(videoId);
+                        });
+                        
+                        // Auto-play after showing results
+                        playYouTubeVideo(videoId);
+                    }
+                }, 100);
+            } else if (songLink) {
+                // Fallback: open in new tab if YouTube API not ready
+                setTimeout(() => {
+                    const playBtn = document.getElementById('playSongBtn');
+                    if (playBtn) {
+                        playBtn.addEventListener('click', () => {
+                            window.open(songLink, '_blank');
+                        });
+                    }
+                }, 100);
+            }
         }
         
     } catch (error) {

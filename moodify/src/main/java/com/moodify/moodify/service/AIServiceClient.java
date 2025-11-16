@@ -1,5 +1,8 @@
 package com.moodify.moodify.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +21,9 @@ public class AIServiceClient {
 
     private static final String FASTAPI_URL = "https://moodify-fastapi-backend.onrender.com/mood-analysis";
 
-    public String getMoodFromImage(byte[] imageBytes, String origFilename) {
+    public Map<String, String> getMoodFromImage(byte[] imageBytes, String origFilename) {
+        Map<String, String> result = new HashMap<>();
+        
         try {
             RestTemplate rest = new RestTemplate();
 
@@ -38,16 +43,27 @@ public class AIServiceClient {
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
             ResponseEntity<String> resp = rest.postForEntity(FASTAPI_URL, requestEntity, String.class);
 
-            // Parse JSON and extract "response" field
+            // Parse JSON response
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(resp.getBody());
-            String mood = jsonNode.get("response").asText();
+            
+            // Extract mood and comment from the new response format
+            String mood = jsonNode.has("mood") ? jsonNode.get("mood").asText() : "UNKNOWN";
+            String comment = jsonNode.has("comment") ? jsonNode.get("comment").asText() : "No comment available";
+            
+            result.put("mood", mood);
+            result.put("comment", comment);
+            
+            System.out.println("✅ Mood detected: " + mood);
+            System.out.println("✅ AI Comment: " + comment);
 
-            return mood;
+            return result;
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error: " + e.getMessage();
+            result.put("mood", "ERROR");
+            result.put("comment", "Error: " + e.getMessage());
+            return result;
         }
     }
 }
