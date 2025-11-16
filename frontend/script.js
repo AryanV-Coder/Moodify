@@ -292,6 +292,9 @@ analyzeBtn.addEventListener('click', async () => {
         const songName = data.song_name || 'No song available';
         const songLink = data.song_link || '';
         
+        // Convert \n to <br> for proper line breaks in HTML
+        const formattedComment = aiComment.replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
+        
         // Get mood emoji
         const moodEmoji = getMoodEmoji(mood);
         
@@ -304,8 +307,8 @@ analyzeBtn.addEventListener('click', async () => {
                 <div style="font-size: 1.4rem; font-weight: bold; color: #1db954; margin-bottom: 15px; letter-spacing: 1px;">
                     ${mood}
                 </div>
-                <div style="font-size: 1rem; color: #fff; margin-bottom: 20px; line-height: 1.6; padding: 15px 20px; background: linear-gradient(135deg, rgba(29, 185, 84, 0.15) 0%, rgba(29, 185, 84, 0.05) 100%); border-radius: 12px; border: 2px solid rgba(29, 185, 84, 0.3); box-shadow: 0 4px 15px rgba(29, 185, 84, 0.1);">
-                    ${aiComment}
+                <div style="font-size: 1rem; color: #fff; margin-bottom: 20px; line-height: 1.8; padding: 15px 20px; background: linear-gradient(135deg, rgba(29, 185, 84, 0.15) 0%, rgba(29, 185, 84, 0.05) 100%); border-radius: 12px; border: 2px solid rgba(29, 185, 84, 0.3); box-shadow: 0 4px 15px rgba(29, 185, 84, 0.1); text-align: left;">
+                    ${formattedComment}
                 </div>
                 <div style="background: linear-gradient(135deg, #282828 0%, #1a1a1a 100%); padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px solid #333;">
                     <div style="font-size: 0.8rem; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">🎵 Now Playing</div>
